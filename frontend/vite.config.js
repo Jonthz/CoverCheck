@@ -8,6 +8,8 @@ export default defineConfig({
     proxy: {
       '/users': 'http://127.0.0.1:8000',
       '/conversations': 'http://127.0.0.1:8000',
+      '/hospitals': 'http://127.0.0.1:8000',
+      '/specialties': 'http://127.0.0.1:8000',
       '/health': 'http://127.0.0.1:8000',
     },
   },

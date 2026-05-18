@@ -1,0 +1,16 @@
+.git
+.direnv
+**/__pycache__
+**/*.pyc
+backend/.venv
+backend/.env
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+backend/*.sqlite
+backend/*.sqlite-shm
+backend/*.sqlite-wal
+frontend/node_modules
+frontend/dist
+frontend/.vite
+.DS_Store
