@@ -395,6 +395,19 @@ def list_conversations(user_id: int) -> list[dict[str, Any]]:
         return rows_to_dicts(rows)
 
 
+def delete_conversation(user_id: int, conversation_id: str) -> bool:
+    with connect() as conn:
+        conversation = conn.execute(
+            "SELECT id FROM conversations WHERE id = ? AND user_id = ?",
+            (conversation_id, user_id),
+        ).fetchone()
+        if not conversation:
+            return False
+        conn.execute("DELETE FROM messages WHERE conversation_id = ?", (conversation_id,))
+        conn.execute("DELETE FROM conversations WHERE id = ?", (conversation_id,))
+        return True
+
+
 def add_message(conversation_id: str, role: str, content: str, metadata: dict[str, Any] | None = None) -> None:
     with connect() as conn:
         conn.execute(

@@ -150,6 +150,15 @@ def messages(conversation_id: str) -> list[dict]:
     return database.get_messages(conversation_id)
 
 
+@app.delete("/users/{user_id}/conversations/{conversation_id}", status_code=204)
+def delete_conversation(user_id: int, conversation_id: str) -> None:
+    logger.info("Deleting conversation_id=%s for user_id=%s", conversation_id, user_id)
+    if not database.get_user(user_id):
+        raise HTTPException(status_code=404, detail="User not found")
+    if not database.delete_conversation(user_id, conversation_id):
+        raise HTTPException(status_code=404, detail="Conversation not found")
+
+
 @app.post("/conversations/{conversation_id}/messages", response_model=ChatResponse)
 async def chat(conversation_id: str, payload: MessageRequest) -> ChatResponse:
     logger.info("Received non-streaming chat message for conversation_id=%s", conversation_id)

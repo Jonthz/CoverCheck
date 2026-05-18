@@ -61,7 +61,8 @@
 
 .sidebar select,
 .new-chat,
-.conversation-list button,
+.conversation-select,
+.delete-chat,
 .composer textarea,
 .composer button {
   font: inherit;
@@ -100,20 +101,53 @@
   min-height: 0;
 }
 
-.conversation-list button {
+.conversation-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
-  padding: 14px;
-  text-align: left;
-  color: inherit;
   background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.conversation-select,
+.delete-chat {
+  border: 0;
+  color: inherit;
   cursor: pointer;
 }
 
-.conversation-list button.active,
-.conversation-list button:hover {
+.conversation-select {
+  min-width: 0;
+  padding: 14px;
+  text-align: left;
+  background: transparent;
+}
+
+.delete-chat {
+  align-self: stretch;
+  padding: 0 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(245, 239, 227, 0.72);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.delete-chat:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.conversation-row.active,
+.conversation-row:hover {
   background: rgba(240, 195, 106, 0.16);
   border-color: rgba(240, 195, 106, 0.42);
+}
+
+.delete-chat:hover:not(:disabled) {
+  background: rgba(255, 225, 215, 0.14);
+  color: #ffe1d7;
 }
 
 .conversation-list span {

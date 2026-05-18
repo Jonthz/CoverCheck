@@ -41,6 +41,7 @@ function parseSse(buffer) {
 async function request(path, options) {
   const response = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options })
   if (!response.ok) throw new Error((await response.text()) || `Error ${response.status}`)
+  if (response.status === 204) return null
   return response.json()
 }
 
@@ -239,6 +240,25 @@ function App() {
     return conversation.conversation_id
   }
 
+  async function deleteConversation(conversationId) {
+    if (isStreaming) return
+    const confirmed = window.confirm('¿Eliminar esta conversación? Esta acción no se puede deshacer.')
+    if (!confirmed) return
+    try {
+      setError('')
+      await request(`/users/${selectedUserId}/conversations/${conversationId}`, { method: 'DELETE' })
+      const nextConversations = conversations.filter((conversation) => conversation.conversation_id !== conversationId)
+      setConversations(nextConversations)
+      if (selectedConversationId === conversationId) {
+        setSelectedConversationId(nextConversations[0]?.conversation_id ?? '')
+        setMessages([])
+        setProgress([])
+      }
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   function changePatient() {
     setSelectedUserId('')
     setSelectedConversationId('')
@@ -305,10 +325,15 @@ function App() {
         <div className="conversation-list" aria-label="Conversaciones">
           {conversations.length === 0 ? <p className="empty-sidebar">Aún no hay conversaciones</p> : null}
           {conversations.map((conversation) => (
-            <button className={conversation.conversation_id === selectedConversationId ? 'active' : ''} key={conversation.conversation_id} type="button" onClick={() => setSelectedConversationId(conversation.conversation_id)}>
-              <span>{titleForConversation(conversation)}</span>
-              <small>{new Date(conversation.updated_at).toLocaleString()}</small>
-            </button>
+            <div className={conversation.conversation_id === selectedConversationId ? 'conversation-row active' : 'conversation-row'} key={conversation.conversation_id}>
+              <button className="conversation-select" type="button" onClick={() => setSelectedConversationId(conversation.conversation_id)}>
+                <span>{titleForConversation(conversation)}</span>
+                <small>{new Date(conversation.updated_at).toLocaleString()}</small>
+              </button>
+              <button className="delete-chat" type="button" onClick={() => deleteConversation(conversation.conversation_id)} disabled={isStreaming} aria-label={`Eliminar ${titleForConversation(conversation)}`}>
+                Eliminar
+              </button>
+            </div>
           ))}
         </div>
       </aside>
