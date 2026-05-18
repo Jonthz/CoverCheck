@@ -9,7 +9,6 @@ wheels/
 # Virtual environments
 .venv
 .env
-.envrc
 
 # Runtime SQLite databases and sidecar files
 *.db
